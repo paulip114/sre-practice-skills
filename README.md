@@ -1,6 +1,13 @@
 # SRE Practice Skills
 
 [![Install via skills.sh](https://img.shields.io/badge/skills.sh-install-green)](https://skills.sh/paulip114/sre-practice-skills)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+
+**Give your AI agent an SRE playbook.** Eight agent skills that teach Claude Code (and other Agent Skills–compatible agents) to set SLOs, write burn-rate alerts, run incidents, review postmortems, and more — the way Google's SRE books describe.
+
+```bash
+npx skills add paulip114/sre-practice-skills
+```
 
 [English](#english) | [中文](#中文)
 
@@ -8,9 +15,9 @@
 
 ## English
 
-Eight agent skills that teach Claude Code how to apply Site Reliability Engineering practices: SLOs, alerting, incident response, postmortems, on-call, releases, capacity and data reliability.
+### Why
 
-The skills are based on the ideas in Google's two free SRE books:
+Google's two free SRE books are some of the most practical writing on running production systems, but an agent doesn't know when or how to apply them. These skills turn the books' practices into step-by-step procedures, checklists and templates that the agent loads automatically when your request matches:
 
 - *Site Reliability Engineering* (2016) — https://sre.google/sre-book/table-of-contents/
 - *The Site Reliability Workbook* (2018) — https://sre.google/workbook/table-of-contents/
@@ -23,16 +30,22 @@ The skills are based on the ideas in Google's two free SRE books:
 
 ### Install
 
-Copy the `sre-*` folders into a Claude Code skills directory.
-
-For one project:
+With the [skills CLI](https://skills.sh) (recommended):
 ```bash
-mkdir -p .claude/skills && cp -r sre-* .claude/skills/
+# All 8 skills
+npx skills add paulip114/sre-practice-skills
+
+# One skill, for Claude Code only
+npx skills add paulip114/sre-practice-skills --skill sre-postmortem -a claude-code
+
+# Install globally (all projects)
+npx skills add paulip114/sre-practice-skills -g
 ```
 
-For all your projects:
+Or copy the folders manually:
 ```bash
-mkdir -p ~/.claude/skills && cp -r sre-* ~/.claude/skills/
+git clone https://github.com/paulip114/sre-practice-skills
+mkdir -p ~/.claude/skills && cp -r sre-practice-skills/sre-* ~/.claude/skills/
 ```
 
 The skills use the standard `SKILL.md` format, so they also work in other agents that support Agent Skills.
@@ -45,6 +58,38 @@ Claude loads a skill automatically when your request matches its description. Yo
 Use sre-slos-and-error-budgets to propose SLOs for our checkout API.
 Use sre-postmortem to review this incident write-up.
 Use sre-monitoring-and-alerting to turn a 99.9% SLO into Prometheus alerts.
+```
+
+### Example
+
+**Prompt**
+
+```text
+Use sre-slos-and-error-budgets to propose starter SLOs for our checkout API.
+Last 4 weeks: 3.2M requests, 99.62% non-5xx, p90 latency 380 ms, p99 1.1 s.
+```
+
+**What the skill guides the agent to produce** (abridged, illustrative)
+
+| SLI | Measured at | Starter SLO | Allowed bad events / 4 weeks |
+|---|---|---|---|
+| Availability (non-5xx / all) | Load balancer | 99.6% | ~12,800 |
+| Latency | Load balancer | 90% of requests < 400 ms | ~320,000 |
+| Latency (tail) | Load balancer | 99% of requests < 1.2 s | ~32,000 |
+
+Plus: the rationale (targets derived from observed performance, rounded to manageable values), known blind spots (load-balancer metrics miss requests that never reach it), a 4-week rolling window, a filled-in SLO document, sign-off steps for product, dev and ops, and a pointer to an error budget policy and burn-rate alerts.
+
+**Burn-rate calculator** (real output)
+
+```console
+$ python3 sre-monitoring-and-alerting/scripts/burn_rate.py --slo 99.9 --period-days 30
+SLO 99.9% over 30 days -> error budget 0.1%
+A 100% outage exhausts the budget in 43.2m
+
+severity  budget    long   short    burn   threshold
+page          2%    1.0h    5.0m    14.4       1.44%
+page          5%    6.0h   30.0m       6        0.6%
+ticket       10%    3.0d    6.0h       1        0.1%
 ```
 
 ### Skills
@@ -72,29 +117,23 @@ Use sre-monitoring-and-alerting to turn a 99.9% SLO into Prometheus alerts.
 | `sre-release-and-launch/references/` | Launch checklist, production best-practices audit list |
 | `sre-capacity-and-system-design/references/` | Back-of-envelope estimation cheatsheet |
 
-Example:
-```bash
-python3 sre-monitoring-and-alerting/scripts/burn_rate.py --slo 99.9 --period-days 30
-```
-
 ### Contributing
 
-Issues and pull requests are welcome. Please keep contributions in your own words: do not paste text, tables or code from the books.
+Issues and pull requests are welcome — new examples, fixes, and translations especially. Please keep contributions in your own words: do not paste text, tables or code from the books.
+
+If these skills help you, a ⭐ helps others find them.
 
 ### License
 
-- Documentation (`SKILL.md` files, templates, references): [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
-- Code (`scripts/`): [MIT](https://opensource.org/licenses/MIT)
-
-These licenses apply only to the original content in this repository. They do not relicense any part of Google's books.
+[Apache License 2.0](LICENSE). This applies only to the original content in this repository and does not relicense any part of Google's books.
 
 ---
 
 ## 中文
 
-八個 agent skills，讓 Claude Code 懂得運用網站可靠性工程（SRE）的實務做法，涵蓋 SLO、告警、事件應變、事後檢討、值班、發布、容量規劃與資料可靠性。
+### 為什麼做這個
 
-內容依據 Google 免費公開的兩本 SRE 書籍中的觀念整理：
+Google 免費公開的兩本 SRE 書籍，是談正式環境維運最實用的資料之一，但 AI agent 並不知道何時、如何運用這些做法。這些 skills 把書中的實務做法整理成步驟、檢查清單與範本，當你的需求符合時，agent 會自動載入：
 
 - 《Site Reliability Engineering》（2016）— https://sre.google/sre-book/table-of-contents/
 - 《The Site Reliability Workbook》（2018）— https://sre.google/workbook/table-of-contents/
@@ -106,16 +145,22 @@ These licenses apply only to the original content in this repository. They do no
 
 ### 安裝
 
-把 `sre-*` 資料夾複製到 Claude Code 的 skills 目錄。
-
-只用在單一專案：
+使用 [skills CLI](https://skills.sh)（推薦）：
 ```bash
-mkdir -p .claude/skills && cp -r sre-* .claude/skills/
+# 安裝全部 8 個 skills
+npx skills add paulip114/sre-practice-skills
+
+# 只安裝一個 skill 到 Claude Code
+npx skills add paulip114/sre-practice-skills --skill sre-postmortem -a claude-code
+
+# 全域安裝（所有專案）
+npx skills add paulip114/sre-practice-skills -g
 ```
 
-用在所有專案：
+或手動複製資料夾：
 ```bash
-mkdir -p ~/.claude/skills && cp -r sre-* ~/.claude/skills/
+git clone https://github.com/paulip114/sre-practice-skills
+mkdir -p ~/.claude/skills && cp -r sre-practice-skills/sre-* ~/.claude/skills/
 ```
 
 這些 skills 採用標準的 `SKILL.md` 格式，其他支援 Agent Skills 的 agent 也能使用。
@@ -128,6 +173,38 @@ mkdir -p ~/.claude/skills && cp -r sre-* ~/.claude/skills/
 用 sre-slos-and-error-budgets 幫我們的結帳 API 訂 SLO。
 用 sre-postmortem 檢查這份事件報告。
 用 sre-monitoring-and-alerting 把 99.9% 的 SLO 轉成 Prometheus 告警。
+```
+
+### 範例
+
+**提示詞**
+
+```text
+用 sre-slos-and-error-budgets 幫我們的結帳 API 提出初始 SLO。
+過去 4 週：320 萬個請求，99.62% 非 5xx，p90 延遲 380 ms，p99 1.1 秒。
+```
+
+**skill 引導 agent 產出的內容**（節錄，僅供示意）
+
+| SLI | 量測位置 | 初始 SLO | 每 4 週可容許的錯誤數 |
+|---|---|---|---|
+| 可用性（非 5xx / 全部） | 負載平衡器 | 99.6% | 約 12,800 |
+| 延遲 | 負載平衡器 | 90% 的請求 < 400 ms | 約 320,000 |
+| 延遲（長尾） | 負載平衡器 | 99% 的請求 < 1.2 秒 | 約 32,000 |
+
+另外還包括：目標的依據（由實際表現推算，取整數方便管理）、量測盲點（負載平衡器的指標看不到沒有抵達它的請求）、4 週滾動視窗、填好的 SLO 文件、產品／開發／維運三方的確認步驟，以及錯誤預算政策和燒錄率告警的下一步建議。
+
+**燒錄率計算器**（實際輸出）
+
+```console
+$ python3 sre-monitoring-and-alerting/scripts/burn_rate.py --slo 99.9 --period-days 30
+SLO 99.9% over 30 days -> error budget 0.1%
+A 100% outage exhausts the budget in 43.2m
+
+severity  budget    long   short    burn   threshold
+page          2%    1.0h    5.0m    14.4       1.44%
+page          5%    6.0h   30.0m       6        0.6%
+ticket       10%    3.0d    6.0h       1        0.1%
 ```
 
 ### Skills 一覽
@@ -155,18 +232,12 @@ mkdir -p ~/.claude/skills && cp -r sre-* ~/.claude/skills/
 | `sre-release-and-launch/references/` | 上線檢查清單、正式環境最佳實務稽核清單 |
 | `sre-capacity-and-system-design/references/` | 粗略估算速查表 |
 
-範例：
-```bash
-python3 sre-monitoring-and-alerting/scripts/burn_rate.py --slo 99.9 --period-days 30
-```
-
 ### 參與貢獻
 
-歡迎提出 issue 和 pull request。請用自己的文字撰寫，不要貼上原書的文字、表格或程式碼。
+歡迎提出 issue 和 pull request，特別是新的範例、修正和翻譯。請用自己的文字撰寫，不要貼上原書的文字、表格或程式碼。
+
+如果這些 skills 對你有幫助，給個 ⭐ 能讓更多人找到它。
 
 ### 授權
 
-- 文件（`SKILL.md`、範本、參考資料）：[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
-- 程式碼（`scripts/`）：[MIT](https://opensource.org/licenses/MIT)
-
-以上授權只適用於本 repo 中的原創內容，不會重新授權 Google 原書的任何部分。
+[Apache License 2.0](LICENSE)。此授權只適用於本 repo 中的原創內容，不會重新授權 Google 原書的任何部分。
