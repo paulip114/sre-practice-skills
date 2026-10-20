@@ -1,4 +1,4 @@
-# SRE Practice Skills for Claude Code
+# SRE Practice Skills
 
 [![Install via skills.sh](https://img.shields.io/badge/skills.sh-install-green)](https://skills.sh/paulip114/sre-practice-skills)
 
