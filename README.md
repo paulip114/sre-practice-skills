@@ -2,6 +2,10 @@
 
 [![Install via skills.sh](https://img.shields.io/badge/skills.sh-install-green)](https://skills.sh/paulip114/sre-practice-skills)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/paulip114/sre-practice-skills)](https://github.com/paulip114/sre-practice-skills/issues)
+[![GitHub stars](https://img.shields.io/github/stars/paulip114/sre-practice-skills?style=social)](https://github.com/paulip114/sre-practice-skills/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/paulip114/sre-practice-skills?style=social)](https://github.com/paulip114/sre-practice-skills/network/members)
+
 
 **Give your AI agent an SRE playbook.** Eight agent skills that teach Claude Code (and other Agent Skills–compatible agents) to set SLOs, write burn-rate alerts, run incidents, review postmortems, and more — the way Google's SRE books describe.
 
